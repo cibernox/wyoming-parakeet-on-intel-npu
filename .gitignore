@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local data — never check models or compiled blobs into git
+data/
+models/
+ov_cache*/
+huggingface/
+*.onnx
+*.onnx.data
+*.xml
+*.bin
+*.blob
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+*.wav
+test_audio/

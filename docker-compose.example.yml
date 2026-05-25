@@ -1,0 +1,35 @@
+version: "3.8"
+
+# Drop-in example for running wyoming-parakeet-on-intel-npu alongside Home
+# Assistant. Adjust the LANGUAGE env var for your default and bind whatever
+# host port you want (10300 is the Wyoming convention).
+#
+# Requirements on the host:
+#   - Intel Core Ultra (Meteor Lake / Arrow Lake / Lunar Lake) with NPU
+#   - Kernel with intel_vpu loaded (verify: ls /dev/accel/accel0)
+#   - The render group has access to /dev/accel/accel0
+#
+# If you run this inside an LXC (Proxmox), the LXC needs the device passed
+# through; see docs/HARDWARE.md.
+
+services:
+  wyoming-parakeet-npu:
+    image: ghcr.io/cibernox/wyoming-parakeet-on-intel-npu:latest
+    container_name: wyoming-parakeet-npu
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Madrid
+      LANGUAGE: es                # one of: en, es, fr, de, it, pt, nl, pl, ru, uk, ...
+      DEVICE: NPU                 # NPU | CPU | GPU
+      ENCODER_BUCKETS: "5"        # eager buckets in seconds
+      ENCODER_LAZY_BUCKETS: "20"  # lazy buckets compiled on first request
+    volumes:
+      - parakeet-data:/data       # caches model weights + compiled NPU blobs
+    devices:
+      - /dev/accel/accel0:/dev/accel/accel0
+    ports:
+      - "10300:10300"
+    mem_limit: 8g
+
+volumes:
+  parakeet-data:
