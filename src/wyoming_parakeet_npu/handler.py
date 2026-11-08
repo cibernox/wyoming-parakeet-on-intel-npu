@@ -45,6 +45,11 @@ class ParakeetEventHandler(AsyncEventHandler):
         self._wav_path = os.path.join(self._wav_dir.name, "speech.wav")
         self._wav_file: Optional[wave.Wave_write] = None
 
+    async def disconnect(self) -> None:
+        # wyoming 1.7.2 never closes the writer when the client goes away,
+        # which leaves the server-side socket in CLOSE_WAIT.
+        self.writer.close()
+
     async def handle_event(self, event: Event) -> bool:
         if AudioChunk.is_type(event.type):
             chunk = AudioChunk.from_event(event)
